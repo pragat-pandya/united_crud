@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 class Product(models.Model):
     name = models.CharField(max_length=200)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=False, null=False)
     price = models.DecimalField(max_digits=5, decimal_places=2)
     stock = models.IntegerField()
     is_active = models.BooleanField(default=True)
