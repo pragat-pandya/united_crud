@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework.exceptions import AuthenticationFailed
 from .models import User
 
 
@@ -27,3 +29,26 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'email', 'first_name', 'last_name', 'phone_number', 'date_of_birth', 'date_joined', 'email_verified')
         read_only_fields = ('id', 'date_joined', 'email_verified')
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        user = self.user
+        
+        # Check if email is verified
+        if not user.email_verified:
+            raise AuthenticationFailed(
+                'Please verify your email address before logging in. Check your email for the verification link.'
+            )
+        
+        return data
+    
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        # Add custom claims
+        token['email'] = user.email
+        token['username'] = user.username
+        token['email_verified'] = user.email_verified
+        return token

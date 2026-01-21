@@ -3,35 +3,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework.exceptions import AuthenticationFailed
 from django.utils import timezone
 from .models import User
-from .serializers import UserRegistrationSerializer, UserSerializer
+from .serializers import UserRegistrationSerializer, UserSerializer, CustomTokenObtainPairSerializer
 from .utils import send_verification_email
-
-
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    def validate(self, attrs):
-        data = super().validate(attrs)
-        user = self.user
-        
-        # Check if email is verified
-        if not user.email_verified:
-            raise AuthenticationFailed(
-                'Please verify your email address before logging in. Check your email for the verification link.'
-            )
-        
-        return data
-    
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-        # Add custom claims
-        token['email'] = user.email
-        token['username'] = user.username
-        token['email_verified'] = user.email_verified
-        return token
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
