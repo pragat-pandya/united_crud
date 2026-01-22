@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 import os
+from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -45,7 +46,8 @@ INSTALLED_APPS = [
     'rest_framework',
 
     # Local Apps
-    'products'
+    'products',
+    'accounts'
 ]
 
 MIDDLEWARE = [
@@ -119,7 +121,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-
+AUTH_USER_MODEL = 'accounts.User'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
@@ -130,3 +132,23 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 1
 }
+
+# from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME' :  timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME' : timedelta(days=1),
+    'ROTATE_REFRESH_TOKEN': False,
+    'BLACKLIST_REFRESH_TOKEN': True
+}
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'pandyapragat@gmail.com'
+EMAIL_HOST_PASSWORD = 'cgekyrnnejuerpjw'
+DEFAULT_FROM_EMAIL = 'pandyapragat@gmail.com'
+
+BACKEND_URL = 'http://localhost:8000'
